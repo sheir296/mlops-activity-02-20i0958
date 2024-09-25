@@ -4,13 +4,12 @@ pipeline {
     environment {
         DOCKER_USERNAME = credentials('docker-username')
         DOCKER_PASSWORD = credentials('docker-password')
-        GIT_USERNAME = credentials('git-credentials')
     }
 
     stages {
         stage('Checkout repository') {
             steps {
-                git credentialsId: 'git-credentials', url: 'https://shersher@your-repo-url.git'
+                checkout scm
             }
         }
 
