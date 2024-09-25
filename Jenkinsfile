@@ -6,8 +6,6 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/sheir296/mlops-activity-02-20i0958.git'
             }
         }
-    }
-}
 
         stage('Build Docker Image') {
             steps {
@@ -21,6 +19,12 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline complete.'
         }
     }
 }
