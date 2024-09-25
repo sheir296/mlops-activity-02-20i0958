@@ -1,46 +1,25 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER_USERNAME = credentials('docker-username')
-        DOCKER_PASSWORD = credentials('docker-password')
-    }
-
+    
     stages {
-        stage('Checkout repository') {
+        stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/sheir296/mlops-activity-02-20i0958.git'
             }
         }
 
-        stage('Set up Docker Buildx') {
+        stage('Build Docker Image') {
             steps {
-                sh '''
-                docker buildx create --use
-                '''
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh """
+                        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+                        docker build -t $DOCKER_USERNAME/my-image .
+                        docker push $DOCKER_USERNAME/my-image
+                        """
+                    }
+                }
             }
-        }
-
-        stage('Log in to Docker Hub') {
-            steps {
-                sh '''
-                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                '''
-            }
-        }
-
-        stage('Build and push Docker image') {
-            steps {
-                sh '''
-                docker buildx build --push --tag $DOCKER_USERNAME/basic-ml-app:latest .
-                '''
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker logout'
         }
     }
 }
