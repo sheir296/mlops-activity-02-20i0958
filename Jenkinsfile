@@ -1,12 +1,13 @@
 pipeline {
     agent any
-    
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/sheir296/mlops-activity-02-20i0958.git'
+                git branch: 'main', url: 'https://github.com/sheir296/mlops-activity-02-20i0958.git'
             }
         }
+    }
+}
 
         stage('Build Docker Image') {
             steps {
